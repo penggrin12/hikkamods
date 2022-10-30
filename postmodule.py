@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# meta developer: @penggrinmods
+# meta developer: @penggrin
 # scope: hikka_only
 
 from .. import loader, utils
@@ -30,35 +30,25 @@ logger = logging.getLogger(__name__)
 
 
 @loader.tds
-class MyModulesMod(loader.Module):
-    """List of all of the modules currently installed, without all of that annoying crap. In just one simple message!"""
+class PostModuleMod(loader.Module):
+    """Description"""
 
     strings = {
-        "name": "MyModules",
-        "amount": "❤️ I have <b>{}</b> modules installed.",
-        "modules": "❤️ Here is all of them:",
+        "name": "PostModule",
     }
-
     strings_ru = {
-        "name": "MyModules",
-        "amount": "❤️ У меня установлено <b>{}</b> модулей.",
-        "modules": "❤️ Все они здесь:",
+        "name": "PostModule",
     }
 
     async def client_ready(self, client, db):
         self.client = client
 
-    async def mymodulescmd(self, message):
-        """- List of all of the modules currently installed"""
+    async def postmodulecmd(self, message):
+        """<name> <short description> <norus (true, false)> <noeng (true, false)> <link> - ||| in description will make a new line (example: FOO|||BAR)"""
+        args = utils.get_args(message)
+        desc = args[1].replace('|||', '\nℹ️ ').replace('|', ' ')
+        rus = '❗️ No Russian translation!\n' if args[2].lower() == 'true' else ''
+        eng = '❗️ No English translation!\n' if args[3].lower() == 'true' else ''
 
-        result = f"{self.strings('amount').format(str(len(self.allmodules.modules)))}\n{self.strings('modules')} | "
-
-        for mod in self.allmodules.modules:
-            try:
-                name = mod.strings["name"]
-            except KeyError:
-                name = mod.__clas__.__name__
-            result += f"<code>{name}</code> | "
-
-        await utils.answer(message, result)
+        await utils.answer(message, f"💻 <code>{args[0]}</code>\nℹ️ {desc}\n\n{rus}{eng}\n🌘 <code>.dlmod {args[4]}</code>")
 

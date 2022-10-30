@@ -43,18 +43,19 @@ class FunApisMod(loader.Module):
     async def __send(self, message: Message, text: str, photo = None):
         reply = await message.get_reply_message()
 
-        if photo:
-            if reply:
-                result = await self.client.send_file(message.peer_id, caption = text, file = photo, reply_to = reply)
-            else:
-                result = await self.client.send_file(message.peer_id, caption = text, file = photo)
-        else:
-            if reply:
-                result = await reply.reply(text)
-            else:
-                result = await message.respond(text)
+        # if photo:
+        #     if reply:
+        #         result = await self.client.send_file(message.peer_id, caption = text, file = photo, reply_to = reply)
+        #     else:
+        #         result = await self.client.send_file(message.peer_id, caption = text, file = photo)
+        # else:
+        #     if reply:
+        #         result = await reply.reply(text)
+        #     else:
+        #         result = await message.respond(text)
 
-        await message.delete()
+        await utils.answer(message, text, photo=photo)
+        #await message.delete()
 
     async def cathttpcmd(self, message: Message):
         """<http code> - Get a cat that represents a certain http code"""
@@ -74,7 +75,7 @@ class FunApisMod(loader.Module):
     async def jokecmd(self, message: Message):
         """Get a random joke"""
         json = requests.get("https://official-joke-api.appspot.com/random_joke").json()
-        await self.__send(message, f"1️⃣ {json['setup']}\n2️⃣ {json['punchline']}")
+        await self.__send(message, f'1️⃣ {json["setup"]}\n2️⃣ <span class="tg-spoiler">{json["punchline"]}</span>')
 
     async def chuckcmd(self, message: Message):
         """Get a hand curated Chuck Norris fact"""
