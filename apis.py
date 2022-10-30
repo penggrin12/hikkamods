@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# meta developer: @penggrin
+# meta developer: @penggrinmods
 # scope: hikka_only
 
 from telethon.tl.types import Message
@@ -43,19 +43,19 @@ class FunApisMod(loader.Module):
     async def __send(self, message: Message, text: str, photo = None):
         reply = await message.get_reply_message()
 
-        # if photo:
-        #     if reply:
-        #         result = await self.client.send_file(message.peer_id, caption = text, file = photo, reply_to = reply)
-        #     else:
-        #         result = await self.client.send_file(message.peer_id, caption = text, file = photo)
-        # else:
-        #     if reply:
-        #         result = await reply.reply(text)
-        #     else:
-        #         result = await message.respond(text)
+        if photo:
+            if reply:
+                result = await self.client.send_file(message.peer_id, caption = text, file = photo, reply_to = reply)
+            else:
+                result = await self.client.send_file(message.peer_id, caption = text, file = photo)
+        else:
+            if reply:
+                result = await reply.reply(text)
+            else:
+                result = await message.respond(text)
 
-        await utils.answer(message, text, photo=photo)
-        #await message.delete()
+        #await utils.answer(message, text, photo=photo)
+        await message.delete()
 
     async def cathttpcmd(self, message: Message):
         """<http code> - Get a cat that represents a certain http code"""
