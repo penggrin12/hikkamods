@@ -1,26 +1,7 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2022 penggrin
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
 
-# meta developer: @penggrin
+# meta developer: @penggrinmods
 # scope: hikka_only
 
 from telethon.tl.types import Message
@@ -36,6 +17,16 @@ class IrisManagerMod(loader.Module):
 
     strings = {
         "name": "IrisManager",
+        "config_delete_cmds": "Delete the messages IrisManager sends?",
+        "bot": "🤖 Bot",
+        "user": "👨‍🦰 User",
+        "cant_get_user_info": "🚫 Cant get information about that user!"
+    }
+    strings_ru = {
+        "config_delete_cmds": "Удалять сообщения которые отправляет IrisManager?",
+        "bot": "🤖 Бот",
+        "user": "👨‍🦰 Юзер",
+        "cant_get_user_info": "🚫 Не могу получить информацию об этом пользователе!"
     }
 
     def list_to_str(self, a = None):
@@ -49,7 +40,7 @@ class IrisManagerMod(loader.Module):
             loader.ConfigValue(
                 "delete_cmds",
                 True,
-                lambda: "Delete the messages IrisManager sends?",
+                lambda: self.strings("config_delete_cmds"),
                 validator=loader.validators.Boolean(),
             ),
         )
@@ -72,8 +63,9 @@ class IrisManagerMod(loader.Module):
             await result.delete()
         #return result
 
+    @loader.command(ru_doc="[id:str OR int] - Возвращает данные о пользователе с помощью его айди / юзернейма, либо с помощью ответа")
     async def idcmd(self, message: Message):
-        """[id] - Возвращает данные о пользователе с помощью его айди, либо с помощью ответа"""
+        """[id:str OR int] - Returns information about the user from their id / username, or with an reply"""
         args = utils.get_args(message)
         reply = await message.get_reply_message()
         target = None
@@ -89,10 +81,10 @@ class IrisManagerMod(loader.Module):
                     target = await self.client.get_input_entity(args[0])
                 target = await self.client.get_entity(target)
 
-            await utils.answer(message, f"{'🤖 Bot' if target.bot else '👨‍🦰 User'}:\n`{target.first_name}` {f'`{target.last_name}`' if target.last_name else ''}\n`{target.id}` {f'(`{target.username}`)' if target.username else ''}", parse_mode = "Markdown")
+            await utils.answer(message, f"{self.strings('bot') if target.bot else self.strings('user')}:\n`{target.first_name}` {f'`{target.last_name}`' if target.last_name else ''}\n`{target.id}` {f'(`{target.username}`)' if target.username else ''}", parse_mode = "Markdown")
         except Exception as e:
             logger.warning(f"Cant get information about the user (called by 'id' command)\n{e}")
-            await utils.answer(message, f"🚫 Не удалось получить информацию о пользователе\n\n❓ {e}")
+            await utils.answer(message, f"{self.strings('cant_get_user_info')}\n\n❓ {e}")
 
     async def idkcmd(self, message: Message):
         """.дк [anything]"""
@@ -107,9 +99,12 @@ class IrisManagerMod(loader.Module):
         await self.__iriscommand(".топ", message)
 
     async def itopacmd(self, message: Message):
-        """.топ <count> вся"""
+        """.топ <count:int> вся"""
         args = utils.get_args(message)
-        await self.__iriscommand(f".топ {args[0] or 15} вся", message, use_args = False)
+        amount = 10
+        if len(args) > 0:
+            amount = args[0]
+        await self.__iriscommand(f".топ {amount} вся", message, use_args = False)
 
     async def ipingcmd(self, message: Message):
         """Пинг"""
@@ -154,37 +149,37 @@ class IrisManagerMod(loader.Module):
         await self.__iriscommand("", message, force_reply = last[1])
 
     async def iwarncmd(self, message: Message):
-        """Варн <user> [reason]"""
+        """Варн <user> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Варн {args[0]}\n", message)
 
     async def iwarntcmd(self, message: Message):
-        """Варн <user> <time> [reason]"""
+        """Варн <user> <time:int> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Варн {args[0]} {args[1]}\n", message)
 
     async def imutecmd(self, message: Message):
-        """Мут <user> [reason]"""
+        """Мут <user> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Мут {args[0]}\n", message)
 
     async def imutetcmd(self, message: Message):
-        """Мут <user> <time> [reason]"""
+        """Мут <user> <time:int> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Мут {args[0]} {args[1]}\n", message)
 
     async def ibancmd(self, message: Message):
-        """Бан <user> [reason]"""
+        """Бан <user> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Бан 267 дней {args[0]}\n", message)
 
     async def ibantcmd(self, message: Message):
-        """Бан <user> <time> [reason]"""
+        """Бан <user> <time:int> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Бан {args[0]} {args[1]}\n", message)
 
     async def ikickcmd(self, message: Message):
-        """Кик <user> [reason]"""
+        """Кик <user> [reason:str]"""
         args = utils.get_args(message)
         await self.__iriscommand(f"Кик {args[0]}\n", message)
 

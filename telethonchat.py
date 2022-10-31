@@ -1,26 +1,7 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2022 penggrin
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
 
-# meta developer: @penggrin
+# meta developer: @penggrinmods
 # scope: hikka_only
 
 from telethon.tl.types import Message
@@ -54,10 +35,6 @@ class TelethonChatManager(loader.Module):
             ),
         )
 
-    async def client_ready(self, client, db):
-        self.client = client
-        self.db = db
-
     async def __telethoncommand(self, command: str, message: Message, force_reply=None, delete_result=True, use_args=True):
         reply = await message.get_reply_message() or force_reply
         if use_args:
@@ -73,44 +50,54 @@ class TelethonChatManager(loader.Module):
             await result.delete()
         #return result
 
+    @loader.command(ru_doc="- Подсказать пользователю что русский чат существует")
     async def truscmd(self, message: Message):
-        """- Подсказать пользователю что русский чат существует"""
+        """- Say to a user that russian chat exists"""
         await self.__telethoncommand("Just so you know, there is a Russian Telethon Chat\n@TelethonRussian", message, delete_result=False)
 
+    @loader.command(ru_doc="- Уведомить пользователя что в этом чате нужно общатся только на английском")
     async def tengcmd(self, message: Message):
-        """- Уведомить пользователя что в этом чате нужно общатся только на английском"""
+        """- Say to a user that they should speak english"""
         await self.__telethoncommand("Please speak English!", message, delete_result=False)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что его вопрос хуета")
     async def taskcmd(self, message: Message):
-        """- Уведомить пользователя о том что его вопрос хуета"""
+        """- Say to a user that they should learn how to ask questions"""
         await self.__telethoncommand("#ask", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что он нихуя не шарит в пайтоне")
     async def tlearncmd(self, message: Message):
-        """- Уведомить пользователя о том что он нихуя не шарит в пайтоне"""
+        """- Say to a user that they need to learn python"""
         await self.__telethoncommand("#learn", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что он тут нельзя оффтопить")
     async def tofftopcmd(self, message: Message):
-        """- Уведомить пользователя о том что он тут нельзя оффтопить"""
+        """- Say to a user that you cant offtop here"""
         await self.__telethoncommand("#ot", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что ему нужно включить логгинг")
     async def tlogscmd(self, message: Message):
-        """- Уведомить пользователя о том что ему нужно включить логгинг"""
+        """- Say to a user that they need to enable logging"""
         await self.__telethoncommand("#logs", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что ему нужно прочитать документацию")
     async def trtdcmd(self, message: Message):
-        """- Уведомить пользователя о том что ему нужно прочитать документацию"""
+        """- Say to a user that they need to read the docs"""
         await self.__telethoncommand("#rtd", message)
 
+    @loader.command(ru_doc="<user OR reply> - Пожаловаться на пользователя")
     async def treportcmd(self, message: Message):
-        """<user OR reply> - Пожаловаться на пользователя"""
+        """<user OR reply> - Report a user"""
         await self.__telethoncommand("#report", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что то что ему нужно нету в V1")
     async def tv1cmd(self, message: Message):
-        """- Уведомить пользователя о том что то что ему нужно нету в V1"""
+        """- Say to a user that the thing he wants is not in V1 yet"""
         await self.__telethoncommand("#v1", message)
 
+    @loader.command(ru_doc="- Уведомить пользователя о том что спамерам тут не рады")
     async def tspamcmd(self, message: Message):
-        """- Уведомить пользователя о том что спамерам тут не рады"""
+        """- Say to a user that spammers are not welcomed here"""
         await self.__telethoncommand("#spam", message)
 
         

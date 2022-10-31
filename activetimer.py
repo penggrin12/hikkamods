@@ -1,26 +1,7 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2022 penggrin
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
 
-# meta developer: @penggrin
+# meta developer: @penggrinmods
 # scope: hikka_only
 # scop: hikka_min 1.3.0
 
@@ -37,7 +18,15 @@ logger = logging.getLogger(__name__)
 class ActiveTimerMod(loader.Module):
     """Shows a (since my last message) timer in your lastname"""
 
-    strings = {"name": "ActiveTimerMod"}
+    strings = {
+        "name": "ActiveTimerMod",
+        "timer_set": "✅ Cool. The timer is set to: {}",
+        "not_enough_arguments": "❌ Not enough arguments!",
+    }
+    strings_ru = {
+        "timer_set": "✅ Люти пон. Таймер установлен на: {}",
+        "not_enough_arguments": "❌ Не достаточно параметров!",
+    }
 
     def __init__(self):
         self.config = loader.ModuleConfig(
@@ -54,14 +43,8 @@ class ActiveTimerMod(loader.Module):
         )
 
     async def client_ready(self, client, db):
-        self.client = client
-        self.db = db
-        self.me = await self.client.get_me()
-
         if not self.get("timer"):
             self.set("timer", 0)
-
-        logger.info("activetimer")
 
     def get_timer_emoji(self, timer):
         if timer > 10800:
@@ -74,26 +57,26 @@ class ActiveTimerMod(loader.Module):
             return "💚"
 
     async def get_new_name(self):
-        #return f"{self.me.last_name.split(' | ')[0]} | {str(datetime.timedelta(seconds=timer))}"
         return f'{self.config["custom_divider"] or "|"} {self.config["custom_message"] or self.get_timer_emoji(self.get("timer"))} {str(datetime.timedelta(seconds=self.get("timer")))}'
 
     async def setname(self):
-        #try:
         newName = await self.get_new_name()
         await self.client(UpdateProfileRequest(first_name=None, last_name=newName, about=None))
-        #except Exception as e:
-        #    logger.error(e)
 
+    @loader.command(ru_doc="<timer:int> - Поменять время таймера вручную")
     async def settimercmd(self, message):
-        """<timer> - You probably dont wanna use it"""
+        """<timer:int> - Manually change the timer"""
         args = utils.get_args(message)
+        if len(args) < 1:
+            await utils.answer(message, self.strings("not_enough_arguments"))
+            return
+
         self.set("timer", int(args[0]))
         await self.setname()
-        await utils.answer(message, f"✅ люти пон, таймер теперь: {str(datetime.timedelta(seconds=int(args[0])))}")
+        await utils.answer(message, self.strings("timer_set").format(str(datetime.timedelta(seconds=int(args[0])))))
 
     @loader.watcher(only_messages=True, out=True, no_commands=True)
     async def newMessage(self, message):
-        logger.debug("New Message By A User!")
         self.set("timer", 0)
         #await self.setname()
         
