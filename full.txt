@@ -7,3 +7,5 @@ modules
 telethonchat
 vahui
 ytsearch
+nostickers
+figlet
