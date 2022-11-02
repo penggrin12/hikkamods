@@ -5,3 +5,5 @@ iris
 logger
 modules
 telethonchat
+vahui
+ytsearch
