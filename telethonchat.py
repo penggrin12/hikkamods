@@ -53,12 +53,12 @@ class TelethonChatManager(loader.Module):
     @loader.command(ru_doc="- Подсказать пользователю что русский чат существует")
     async def truscmd(self, message: Message):
         """- Say to a user that russian chat exists"""
-        await self.__telethoncommand("Just so you know, there is a Russian Telethon Chat\n@TelethonRussian", message, delete_result=False)
+        await utils.answer(message, "Just so you know, there is a Russian Telethon Chat\n@TelethonRussian")
 
     @loader.command(ru_doc="- Уведомить пользователя что в этом чате нужно общатся только на английском")
     async def tengcmd(self, message: Message):
         """- Say to a user that they should speak english"""
-        await self.__telethoncommand("Please speak English!", message, delete_result=False)
+        await utils.answer(message, "Please speak English!")
 
     @loader.command(ru_doc="- Уведомить пользователя о том что его вопрос хуета")
     async def taskcmd(self, message: Message):
