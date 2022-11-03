@@ -9,3 +9,4 @@ vahui
 ytsearch
 nostickers
 figlet
+regtime
