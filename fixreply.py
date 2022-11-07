@@ -4,7 +4,6 @@
 # meta developer: @penggrinmods
 # scope: hikka_only
 
-from telethon.tl.types import Message
 from .. import loader, utils
 import logging, asyncio
 
@@ -28,11 +27,11 @@ class FixReplyMod(loader.Module):
     lastMessage = None
 
     @loader.watcher(out=True, only_messages=True, no_commands=True)
-    async def newMessage(self, message: Message):
+    async def newMessage(self, message):
         self.lastMessage = message
 
     @loader.command(ru_doc="- Ответьте на сообщение этой командой чтобы починить ответ на своём последнем сообщении")
-    async def fixreplycmd(self, message: Message):
+    async def fixreplycmd(self, message):
         """- Respond to a message to fix your last message reply"""
         reply = await message.get_reply_message()
 

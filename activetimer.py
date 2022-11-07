@@ -3,13 +3,14 @@
 
 # meta developer: @penggrinmods
 # scope: hikka_only
-# scop: hikka_min 1.3.0
-
-__version__ = (1, 0, 0)
 
 from telethon.tl.functions.account import UpdateProfileRequest
-import time, logging, datetime, asyncio
 from .. import loader, utils
+import logging
+
+import time
+import datetime
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -76,9 +77,8 @@ class ActiveTimerMod(loader.Module):
         await utils.answer(message, self.strings("timer_set").format(str(datetime.timedelta(seconds=int(args[0])))))
 
     @loader.watcher(only_messages=True, out=True, no_commands=True)
-    async def newMessage(self, message):
+    async def new_message(self, message):
         self.set("timer", 0)
-        #await self.setname()
         
     @loader.loop(interval=30, autostart=True)
     async def loop(self):

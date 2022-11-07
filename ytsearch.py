@@ -22,6 +22,7 @@
 #   ( @KeyZenD )
 
 # meta developer: @KeyZenD
+# requires: youtube_search
 
 from .. import loader, utils
 import logging
@@ -38,11 +39,11 @@ class YTsearchMod(loader.Module):
 
     strings = {
         "name": "YTsearch",
-        "found": "❤️ Results by query: {}",
+        "found": "❤️ Results by query: <code>{}</code>",
         "video": "Video",
     }
     strings_ru = {
-        "found": "❤️ Результаты по запросу: {}",
+        "found": "❤️ Результаты по запросу: <code>{}</code>",
         "video": "Видео",
     }
 

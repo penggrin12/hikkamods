@@ -8,10 +8,11 @@
 from .. import loader, utils
 import logging
 
-import asyncio, time
-import numpy as np
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+import asyncio
+import time
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

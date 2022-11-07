@@ -1,12 +1,13 @@
 activetimer
 apis
+auto_owoify
+figlet
 fixreply
 iris
 logger
 modules
+nostickers
+regtime
 telethonchat
 vahui
 ytsearch
-nostickers
-figlet
-regtime

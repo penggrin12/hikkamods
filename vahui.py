@@ -22,7 +22,6 @@ class VahuiMod(loader.Module):
     }
 
     strings_ru = {
-        "name": "VahuiMod",
         "config_enable": "Статус этого модуля",
         "config_vahuis": "Вахуи на которые мы можем ответить",
         "config_response": "Ответ который мы дадим",

@@ -4,10 +4,13 @@
 # meta developer: @penggrinmods
 # scope: hikka_only
 
-from telethon.tl.types import Message
 from .. import loader, utils
+import logging
 
-import requests, random
+import requests
+import random
+
+logger = logging.getLogger(__name__)
 
 
 @loader.tds
@@ -47,7 +50,7 @@ class FunApisMod(loader.Module):
             ),
         )
 
-    async def __send(self, message: Message, text: str, photo = None):
+    async def __send(self, message, text: str, photo = None):
         reply = await message.get_reply_message()
 
         if photo:
@@ -64,7 +67,7 @@ class FunApisMod(loader.Module):
         #await utils.answer(message, text, photo=photo)
         await message.delete()
 
-    async def __search(self, message: Message, query, num = 3, lang = "ru"):
+    async def __search(self, message, query, num = 3, lang = "ru"):
         if not self.config["zenserp_token"]:
             await utils.answer(message, self.strings("no_zenserp_token"))
             return
@@ -75,50 +78,50 @@ class FunApisMod(loader.Module):
         return response.json()
 
     @loader.command(ru_doc="<http code:int> - Получить котика на тему http кода")
-    async def cathttpcmd(self, message: Message):
+    async def cathttpcmd(self, message):
         """<http code:int> - Get a cat that represents a certain http code"""
         args = utils.get_args(message)
         await self.__send(message, utils.ascii_face(), photo = f"https://http.cat/{args[0]}")
 
     @loader.command(ru_doc="- Получить случайную картинку котика")
-    async def catpiccmd(self, message: Message):
+    async def catpiccmd(self, message):
         """- Get a random cat picture"""
         json = requests.get("https://aws.random.cat/meow").json()
         await self.__send(message, utils.ascii_face(), photo = json["file"])
 
     @loader.command(ru_doc="- Получить случайную картинку собачки")
-    async def dogpiccmd(self, message: Message):
+    async def dogpiccmd(self, message):
         """- Get a random dog picture"""
         json = requests.get("https://random.dog/woof.json").json()
         await self.__send(message, utils.ascii_face(), photo = json["url"])
 
     @loader.command(ru_doc="- Получить случайную шутку")
-    async def jokecmd(self, message: Message):
+    async def jokecmd(self, message):
         """- Get a random joke"""
         json = requests.get("https://official-joke-api.appspot.com/random_joke").json()
         await self.__send(message, f'1️⃣ {json["setup"]}\n2️⃣ <tg-spoiler>{json["punchline"]}</tg-spoiler>')
 
     @loader.command(ru_doc="- Получить случайный Факт про Чака Норриса")
-    async def chuckcmd(self, message: Message):
+    async def chuckcmd(self, message):
         """- Get a hand curated Chuck Norris fact"""
         json = requests.get("https://api.chucknorris.io/jokes/random").json()
         await self.__send(message, f"{self.strings('chuck')} 👇\n\n{json['value']}")
 
     @loader.command(ru_doc="- Получить случайный Безполезный факт")
-    async def uselesscmd(self, message: Message):
+    async def uselesscmd(self, message):
         """- Get a random useless fact"""
         json = requests.get("https://uselessfacts.jsph.pl/random.json?language=en").json()
         await self.__send(message, f"{self.strings('useless')} 👇\n\n{json['text']}")
 
     @loader.command(ru_doc="Получить случайную заготовку для мема")
-    async def memetemplatecmd(self, message: Message):
+    async def memetemplatecmd(self, message):
         """- Get a random meme template"""
         json = requests.get("https://api.imgflip.com/get_memes").json()
         meme = random.choice(json['data']['memes'])
         await self.__send(message, f"{meme['name']}", photo = meme['url'])
 
     @loader.command(ru_doc="Получить немного информации про ваше имя")
-    async def aboutmecmd(self, message: Message):
+    async def aboutmecmd(self, message):
         """<firstname:str> - Get some information about someones name"""
         args = utils.get_args(message)
         name = args[0].lower()
@@ -131,7 +134,7 @@ class FunApisMod(loader.Module):
             await self.__send(message, self.strings("name_error"))
 
     @loader.command(ru_doc="<query:str> - Найти гдз, показывает до 3 результатов")
-    async def gdzcmd(self, message: Message):
+    async def gdzcmd(self, message):
         """<query:str> - Will search "гдз <query>" and show up to 3 results"""
         q = utils.get_args_raw(message)
 
@@ -144,7 +147,7 @@ class FunApisMod(loader.Module):
         await self.__send(message, result)
 
     @loader.command(ru_doc="<query:str> - Найти что угодно, показывает до 10 результатов")
-    async def searchcmd(self, message: Message):
+    async def searchcmd(self, message):
         """<query:str> - Will search "<query>" and show up to 10 results"""
         q = utils.get_args_raw(message)
 
