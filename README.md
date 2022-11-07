@@ -1,1 +1,1 @@
-t.me/penggrinmods
+[@penggrinmods](https://t.me/penggrinmods)
