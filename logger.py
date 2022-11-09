@@ -7,8 +7,6 @@
 from .. import loader, utils
 import logging
 
-import re
-
 logger = logging.getLogger(__name__)
 
 
@@ -78,7 +76,11 @@ class LoggerMod(loader.Module):
         await utils.answer(message, self.strings("uploading"))
         self.log_write("a", "-------- Collected --------\n")
 
-        await self.client.send_file(message.peer_id, "loggerfind_.txt", caption=self.strings("gathered"))
+        await self.client.send_file(
+            message.peer_id,
+            "loggerfind_.txt",
+            caption=self.strings("gathered")
+        )
 
         if message.out:
             await message.delete()
@@ -89,7 +91,11 @@ class LoggerMod(loader.Module):
         await utils.answer(message, self.strings("uploading"))
         self.log_write("a", "-------- Collected --------\n")
 
-        await self.client.send_file(message.peer_id, "logger_.txt", caption=self.strings("gathered"))
+        await self.client.send_file(
+            message.peer_id,
+            "logger_.txt",
+            caption=self.strings("gathered")
+        )
 
         if message.out:
             await message.delete()
@@ -101,6 +107,8 @@ class LoggerMod(loader.Module):
         if len(message.message) <= 0:
             return
 
-        user = await self.client.get_entity(message.from_id)
-        self.log_write("a", f'{message.id} - {message.peer_id} [{user.id}] [{user.username or user.first_name}]: "{message.message}"\n')
-
+        try:
+            user = await self.client.get_entity(message.from_id)
+            self.log_write("a", f'{message.id} - {message.peer_id} [{user.id}] [{user.username or user.first_name}]: "{message.message}"\n')
+        except Exception:
+            pass

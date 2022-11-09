@@ -8,9 +8,7 @@ from telethon.tl.functions.account import UpdateProfileRequest
 from .. import loader, utils
 import logging
 
-import time
 import datetime
-import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +21,18 @@ class ActiveTimerMod(loader.Module):
         "name": "ActiveTimerMod",
         "timer_set": "✅ Cool. The timer is set to: {}",
         "not_enough_arguments": "❌ Not enough arguments!",
+        "config_custom_divider": "Custom divider, Defaults to »|« (Bob »|« 💚 0:05:00 ago)",
+        "config_custom_prefix": "Custom prefix, Defaults to a colored heart (Bob | »💚« 0:05:00 ago)",
+        "config_custom_suffix": "Custom suffix, Defaults to »ago« (Bob | 💚 0:05:00 »ago«)",
+        "ago": "ago",
     }
     strings_ru = {
         "timer_set": "✅ Люти пон. Таймер установлен на: {}",
         "not_enough_arguments": "❌ Не достаточно параметров!",
+        "config_custom_divider": "Кастомный разделитель, по стандарту: »|« (Bob »|« 💚 0:05:00 назад)",
+        "config_custom_prefix": "Кастомный префикс, по стандарту: сердечко (Bob | »💚« 0:05:00 назад)",
+        "config_custom_suffix": "Кастомный суфикс, по стандарту: »назад« (Bob | 💚 0:05:00 »назад«)",
+        "ago": "назад",
     }
 
     def __init__(self):
@@ -34,12 +40,17 @@ class ActiveTimerMod(loader.Module):
             loader.ConfigValue(
                 "custom_divider",
                 None,
-                lambda: "Custom divider, Defaults to | (example: <b>Bob (divider) 0:15:08</b>)",
+                lambda: self.strings("config_custom_divider")
             ),
             loader.ConfigValue(
-                "custom_message",
+                "custom_prefix",
                 None,
-                lambda: "Custom divider, Defaults to nothing (example: <b>Bob | (message) 0:15:08</b>)",
+                lambda: self.strings("config_custom_prefix")
+            ),
+            loader.ConfigValue(
+                "custom_suffix",
+                None,
+                lambda: self.strings("config_custom_suffix")
             ),
         )
 
@@ -58,11 +69,11 @@ class ActiveTimerMod(loader.Module):
             return "💚"
 
     async def get_new_name(self):
-        return f'{self.config["custom_divider"] or "|"} {self.config["custom_message"] or self.get_timer_emoji(self.get("timer"))} {str(datetime.timedelta(seconds=self.get("timer")))}'
+        return f'{self.config["custom_divider"] or "|"} {self.config["custom_prefix"] or self.get_timer_emoji(self.get("timer"))} {str(datetime.timedelta(seconds=self.get("timer")))} {self.config["custom_suffix"] or self.strings("ago")}'
 
     async def setname(self):
-        newName = await self.get_new_name()
-        await self.client(UpdateProfileRequest(first_name=None, last_name=newName, about=None))
+        new_name = await self.get_new_name()
+        await self.client(UpdateProfileRequest(first_name=None, last_name=new_name, about=None))
 
     @loader.command(ru_doc="<timer:int> - Поменять время таймера вручную")
     async def settimercmd(self, message):
@@ -79,7 +90,7 @@ class ActiveTimerMod(loader.Module):
     @loader.watcher(only_messages=True, out=True, no_commands=True)
     async def new_message(self, message):
         self.set("timer", 0)
-        
+
     @loader.loop(interval=30, autostart=True)
     async def loop(self):
         self.set("timer", self.get("timer") + 30)
