@@ -11,3 +11,9 @@ regtime
 telethonchat
 vahui
 ytsearch
+pinner
+codenotes
+raspi
+dot
+emojipon
+hmegacode
