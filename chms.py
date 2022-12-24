@@ -8,6 +8,7 @@
 import asyncio
 import logging
 
+from telethon.tl.types import Message
 from .. import loader, main, translations, utils
 
 logger = logging.getLogger(__name__)
@@ -41,13 +42,13 @@ class CHMSMod(loader.Module):
             loader.ConfigValue(
                 "trusted",
                 [5829488433], # official sources
-                lambda: self.config("cfg_trusted"),
+                lambda: self.strings("cfg_trusted"),
                 validator=loader.validators.Series()
             ),
             loader.ConfigValue(
                 "no_warnings",
                 False,
-                lambda: self.config("cfg_no_warnings"),
+                lambda: self.strings("cfg_no_warnings"),
                 validator=loader.validators.Boolean()
             )
         )
@@ -57,9 +58,9 @@ class CHMSMod(loader.Module):
             await utils.dnd(self._client, source, archive=False)
 
         self.loader_m = self.lookup("loader")
-        self.version = "1.0"
+        self.version = "1.1"
 
-        if (self.config != [5829488433]) and (not self.config["no_warnings"]):
+        if (self.config["trusted"] != [5829488433]) and (not self.config["no_warnings"]):
             await self.client.send_message("me", self.strings("warning"))
 
     async def _load_module(self, message):
