@@ -11,6 +11,7 @@ import logging
 from telethon.tl.types import Message
 from .. import loader, main, translations, utils
 
+__version__ = (1, 2, 0)
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +59,7 @@ class CHMSMod(loader.Module):
             await utils.dnd(self._client, source, archive=False)
 
         self.loader_m = self.lookup("loader")
-        self.version = "1.1"
+        self.version = ".".join(map(str, list(__version__)))
 
         if (self.config["trusted"] != [5829488433]) and (not self.config["no_warnings"]):
             await self.client.send_message("me", self.strings("warning"))
@@ -68,7 +69,10 @@ class CHMSMod(loader.Module):
         await self.loader_m.load_module(doc, None, save_fs=True)
 
         if getattr(self.loader_m, "_fully_loaded", getattr(self.loader_m, "fully_loaded", False)):
-            self.loader_m._update_modules_in_db()
+            if getattr(self.loader_m, "update_modules_in_db", False): # <1.6.0 compatibility
+                self.loader_m.update_modules_in_db()
+            else:
+                self.loader_m._update_modules_in_db()
 
         logger.debug("Done loading new custom module!")
         await message.reply(f"#done")
