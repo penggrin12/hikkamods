@@ -3,7 +3,7 @@
 
 # meta developer: @penggrinmods
 # scope: hikka_we
-# scope: hikka_min 1.2.10
+# scope: hikka_min 1.5.3
 
 import asyncio
 import logging
@@ -11,7 +11,7 @@ import logging
 from telethon.tl.types import Message
 from .. import loader, main, translations, utils
 
-__version__ = (1, 2, 0)
+__version__ = (1, 3, 0)
 logger = logging.getLogger(__name__)
 
 
@@ -89,10 +89,14 @@ class CHMSMod(loader.Module):
         if not (message.sender_id in self.config["trusted"]):
             return
 
-        await message.delete()
-
-        if message.raw_text == "#version":
+        if message.raw_text.startswith("#version"):
             await message.reply(self.version)
-        elif message.raw_text == "#cinstall":
+        elif message.raw_text.startswith("#cinstall"):
             logger.debug("Installing a module from a trusted source")
+            await message.delete()
             await self._load_module(message)
+        else: # dumb fix?
+            return
+
+        if message:
+            await message.delete()
