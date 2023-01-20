@@ -7,7 +7,6 @@ iris
 logger
 modules
 nostickers
-regtime
 telethonchat
 vahui
 ytsearch
