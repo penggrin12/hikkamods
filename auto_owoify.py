@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -15,15 +15,17 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class AutoOwoifyMod(loader.Module):
-    """Makes your messages look more awesome!"""
+    """Makes your messages look more awesome!\nDont forget to look in .config"""
 
     strings = {
         "name": "AutoOwOify",
         "config_enable": "Status of this module",
+        "done": "❤️ Done!",
     }
 
     strings_ru = {
         "config_enable": "Статус этого модуля",
+        "done": "❤️ Готово!",
     }
 
     def __init__(self):
@@ -46,7 +48,6 @@ class AutoOwoifyMod(loader.Module):
             "(/ =ω=)/",
         ]
 
-
         self._patterns = {
             r"[lr]": "w",
             r"[LR]": "W",
@@ -64,7 +65,7 @@ class AutoOwoifyMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "enable",
-                True,
+                False,
                 lambda: self.strings("config_enable"),
                 validator=loader.validators.Boolean(),
             ),
@@ -81,10 +82,15 @@ class AutoOwoifyMod(loader.Module):
         """<text:str> - OwO-ify"""
         await utils.answer(message, self.owoify(utils.get_args_raw(message)))
 
+    @loader.command(ru_doc="Переключить автоматическое OwO-фицирование (используйте .config вместо этого)")
+    async def toggleowocmd(self, message):
+        """Toggle auto OwO-ifier (use .config instead)"""
+        self.config["enable"] = not self.config["enable"]
+        await utils.answer(message, self.strings("done") + (" 🟩" if self.config["enable"] else " 🟥"))
+
     @loader.watcher(out=True, only_messages=True, no_commands=True)
     async def new_message(self, message):
         if not self.config["enable"]:
             return
 
         await utils.answer(message, self.owoify(message.raw_text))
-

@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -25,7 +25,7 @@ class LoggerMod(loader.Module):
         "uploading": "❤️ Please wait!\n⚙️ Uploading...",
     }
     strings_ru = {
-        "gathered": "❤️ Вот что я собрал за всё время",
+        "gathered": "❤️ Вот что я собрал за время работы",
         "already_started": "❌ Логгинг уже включен!",
         "already_stopped": "❌ Логгинг уже выключен!",
         "started": "❤️ Логгинг успешно включен!",
@@ -39,11 +39,12 @@ class LoggerMod(loader.Module):
             file.write(text)
 
     async def client_ready(self, client, db):
+        # Should this be removed?
         if not self.get("logging_active"):
             self.set("logging_active", False)
 
     @loader.command(ru_doc="Включить логгинг")
-    async def lstartcmd(self, message):
+    async def logstartcmd(self, message):
         """- Start the logging"""
         if self.get("logging_active"):
             await utils.answer(message, self.strings("already_started"))
@@ -54,7 +55,7 @@ class LoggerMod(loader.Module):
         await utils.answer(message, self.strings("started"))
 
     @loader.command(ru_doc="- Выключить логгинг")
-    async def lstopcmd(self, message):
+    async def logstopcmd(self, message):
         """- Stop the logging"""
         if not self.get("logging_active"):
             await utils.answer(message, self.strings("already_stopped"))
@@ -64,8 +65,8 @@ class LoggerMod(loader.Module):
         self.log_write("a", "---------- Ended ----------\n")
         await utils.answer(message, self.strings("stopped"))
 
-    @loader.command(ru_doc="<query> - Найти что-то в файле логов")
-    async def lfindcmd(self, message):
+    @loader.command(ru_doc="<запрос> - Найти что-то в файле логов")
+    async def logfindcmd(self, message):
         """<query> - Find something in the logs file"""
         await utils.answer(message, self.strings("searching"))
         with open("loggerfind_.txt", "w") as out:
@@ -86,7 +87,7 @@ class LoggerMod(loader.Module):
             await message.delete()
 
     @loader.command(ru_doc="- Скачать весь файл логов")
-    async def lcollectcmd(self, message):
+    async def logcollectcmd(self, message):
         """- Download the whole logs file"""
         await utils.answer(message, self.strings("uploading"))
         self.log_write("a", "-------- Collected --------\n")

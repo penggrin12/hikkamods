@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils

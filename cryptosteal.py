@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class CryptoStealMod(loader.Module):
-    """Automatically claims cryptobot checks"""
+    """Automatically claims cryptobot (and some other bots) checks"""
 
     strings = {
         "name": "CryptoSteal",
@@ -41,7 +41,7 @@ class CryptoStealMod(loader.Module):
             ),
             loader.ConfigValue(
                 "allow_every_bot",
-                False,
+                True,
                 lambda: self.strings("config_status"),
                 validator=loader.validators.Boolean()
             ),

@@ -17,7 +17,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#   MODIFIED BY @PENGGRINMODS
+#   MODIFIED BY @PenggrinModules
 #   ALL CREDITS GOES TO THE ORIGINAL CREATOR
 #   ( @KeyZenD )
 
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class YTsearchMod(loader.Module):
-    """Video search on youtube. Translated and Edited by @penggrinmods"""
+    """Video search on youtube. Translated and Edited by @PenggrinModules"""
 
     strings = {
         "name": "YTsearch",

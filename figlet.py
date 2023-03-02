@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 # requires: pyfiglet
 
@@ -62,4 +62,3 @@ class FigletMod(loader.Module):
             result = self.strings("font_not_found")
 
         await utils.answer(message, result)
-

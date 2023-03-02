@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -196,5 +196,3 @@ class IrisManagerMod(loader.Module):
         args = utils.get_args(message)
         last = await self.client.get_messages(message.peer_id, limit=2)
         await self.__iriscommand(f"-смс", message, force_reply = last[1], delete_result = False, use_args = False)
-
-        

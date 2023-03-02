@@ -1,7 +1,7 @@
 # The MIT License (MIT)
-# Copyright (c) 2022 penggrin
+# Copyright (c) 2023 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # requires: psutil distro
 # scope: hikka_only
 
@@ -22,7 +22,7 @@ def b2m(b: int) -> int:
 
 @loader.tds
 class RaspiMod(loader.Module):
-    """Control ya Raspberry Pi remotely"""
+    """Control ya Raspberry Pi remotely (tested on Raspbian OS and DietPi)"""
 
     strings = {
         "name": "Raspi",
@@ -69,7 +69,7 @@ class RaspiMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "low_voltage_threshold",
-                4.9,
+                1.3,
                 doc=lambda: self.strings("low_voltage_threshold_config"),
                 validator=loader.validators.Float(),
             ),
@@ -98,8 +98,8 @@ class RaspiMod(loader.Module):
     @loader.command(ru_doc="Получить немного информации о твоей Raspberry Pi")
     async def rinfocmd(self, message):
         """Get some information about ur Raspberry Pi"""
-        temp = (subprocess.check_output(['vcgencmd', 'measure_temp']).decode("utf-8")).split("=")[1]
-        voltage = (subprocess.check_output(['vcgencmd', 'measure_volts']).decode("utf-8")).split("=")[1]
+        temp = (subprocess.check_output(['sudo', '-n', 'vcgencmd', 'measure_temp']).decode("utf-8")).split("=")[1]
+        voltage = (subprocess.check_output(['sudo', '-n', 'vcgencmd', 'measure_volts']).decode("utf-8")).split("=")[1]
         uptime = (subprocess.check_output(['uptime', '-p']).decode("utf-8")).split("up ")[1]
         cores = psutil.cpu_count(logical=True)
         cpu = psutil.cpu_percent()
@@ -110,10 +110,10 @@ class RaspiMod(loader.Module):
 
         await utils.answer(
             message,
-            f"🍇 **{distro.name(pretty=True)}**\n\n" +
-            (self.strings("low_voltage") if float(voltage.split("V")[0]) < self.config["low_voltage_threshold"] else "") +
-            (self.strings("high_temp") if float(temp.split("'C")[0]) > self.config["high_temp_threshold"] else "") +
-            self.strings('info').format(
+            f"🍇 **{distro.name(pretty=True)}**\n\n"
+            + (self.strings("low_voltage") if float(voltage.split("V")[0]) < self.config["low_voltage_threshold"] else "")
+            + (self.strings("high_temp") if float(temp.split("'C")[0]) > self.config["high_temp_threshold"] else "")
+            + self.strings('info').format(
                 temp, voltage, uptime, cores, cpu, ram, ram_total,
                 ram_perc, b2m(hdd.used), b2m(hdd.total), hdd.percent
             ),

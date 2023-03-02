@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -98,5 +98,3 @@ class TelethonChatManager(loader.Module):
     async def tspamcmd(self, message):
         """- Say to a user that spammers are not welcomed here"""
         await self.__telethoncommand("#spam", message)
-
-        

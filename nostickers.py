@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -84,4 +84,3 @@ class NoStickersMod(loader.Module):
             if message.peer_id.channel_id in self.config["channels"]:
                 await message.delete()
                 logger.debug("Just deleted a message!")
-

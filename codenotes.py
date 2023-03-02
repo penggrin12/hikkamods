@@ -24,7 +24,7 @@
 
 # meta pic: https://static.hikari.gay/notes_icon.png
 # meta banner: https://mods.hikariatama.ru/badges/notes.jpg
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 # scope: hikka_min 1.2.10
 

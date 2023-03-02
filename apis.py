@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 penggrin
 
-# meta developer: @penggrinmods
+# meta developer: @PenggrinModules
 # scope: hikka_only
 
 from .. import loader, utils
@@ -158,5 +158,3 @@ class FunApisMod(loader.Module):
             result += f'📄 <b>{i["title"]}</b>\n🔗 {i["url"]}\n\n'
 
         await self.__send(message, result)
-
-        
