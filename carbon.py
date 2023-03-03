@@ -63,7 +63,7 @@ class CarbonMod(loader.Module):
             loader.ConfigValue(
                 "language",
                 "python",
-                "Language",
+                "Programming language",
                 validator=loader.validators.String()
             ),
         )
@@ -100,7 +100,7 @@ class CarbonMod(loader.Module):
             (
                 await utils.run_sync(
                     requests.post,
-                    f'https://code2img.vercel.app/api/to-image?theme={self.config["theme"]}&language=python&line-numbers=true&background-color={self.config["color"]}',
+                    f'https://code2img.vercel.app/api/to-image?theme={self.config["theme"]}&language={self.config["language"]}&line-numbers=true&background-color={self.config["color"]}',
                     headers={"content-type": "text/plain"},
                     data=bytes(args, "utf-8"),
                 )
