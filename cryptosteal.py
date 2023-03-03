@@ -63,7 +63,7 @@ class CryptoStealMod(loader.Module):
             return
 
         await self.client.send_message(url[0], f"/start {url[1]}")
-        logger.info("Sent check get request, hopefully we got it")
+        logger.debug("Sent check get request, hopefully we got it")
 
     async def cryptostealcmd(self, message):
         """Toggle Crypto-Steal"""
