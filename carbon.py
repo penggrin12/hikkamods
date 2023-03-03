@@ -29,21 +29,14 @@ class CarbonMod(loader.Module):
 
     strings = {
         "name": "Carbon",
-        "args": (
-            "<emoji document_id=5312526098750252863>🚫</emoji> <b>No code specified</b>"
-        ),
-        "loading": "<emoji document_id=5213452215527677338>⏳</emoji> <b>Loading...</b>"
+        "args": "<emoji document_id=5312526098750252863>🚫</emoji> <b>No code specified!</b>",
+        "loading": "<emoji document_id=5213452215527677338>⏳</emoji> <b>Loading...</b>",
     }
 
     strings_ru = {
-        "args": (
-            "<emoji document_id=5312526098750252863>🚫</emoji> <b>Не указаны"
-            " код</b>"
-        ),
-        "loading": (
-            "<emoji document_id=5213452215527677338>⏳</emoji> <b>Обработка...</b>"
-        ),
-        "_cls_doc": "Создает симпатичные фотки кода. Отредактировано @Penggrin"
+        "_cls_doc": "Создает симпатичные фотки кода. Отредактировано @Penggrin",
+        "args": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Не указан код!</b>",
+        "loading": "<emoji document_id=5213452215527677338>⏳</emoji> <b>Обработка...</b>",
     }
 
     def __init__(self):
@@ -108,10 +101,12 @@ class CarbonMod(loader.Module):
         )
         doc.name = "carbonized.jpg"
 
-        await self._client.send_message(
+        reply = utils.get_topic(message) or await message.get_reply_message()
+
+        await self.client.send_message(
             utils.get_chat_id(message),
             file=doc,
             force_document=(len(args.splitlines()) > 35),
-            reply_to=getattr(message, "reply_to_msg_id", None),
+            reply_to=reply,
         )
         await message.delete()
