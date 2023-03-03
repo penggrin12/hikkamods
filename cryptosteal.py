@@ -42,7 +42,7 @@ class CryptoStealMod(loader.Module):
             loader.ConfigValue(
                 "allow_every_bot",
                 True,
-                lambda: self.strings("config_status"),
+                lambda: self.strings("config_allow_every_bot"),
                 validator=loader.validators.Boolean()
             ),
         )
