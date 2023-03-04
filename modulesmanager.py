@@ -77,12 +77,8 @@ class ModulesManagerMod(loader.Module):
                 if os.path.isfile(path1):
                     os.remove(path1)
 
-                logger.info(f"{path1=}, {path2=}, {module.__module__=}, {CORE_MODULES_DIR=}")
-                logger.info(f"{(('https' not in module.__module__) and (os.path.isfile(path2)))=}")
-
                 if ("https" not in module.__module__) and (os.path.isfile(path2)):
                     os.remove(path2)
-                    logger.info("yes")
 
                 self.allmodules.modules.remove(module)
 
