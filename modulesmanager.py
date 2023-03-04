@@ -21,32 +21,126 @@ import difflib
 import inspect
 import io
 import logging
+import os
+import copy
+import contextlib
 
 from telethon.tl.types import Message
 from .. import loader, utils
+from ..types import DragonModule
 
+CORE_MODULES_DIR = os.path.join(loader.BASE_DIR, "hikka", "modules")
 logger = logging.getLogger(__name__)
 
 
 @loader.tds
 class ModulesManagerMod(loader.Module):
-    """Hikka Modules Manager, originally made by @hikariatama"""
+    """Hikka Modules Manager, originally made by @hikarimods"""
 
     strings = {
         "name": "ModulesManager",
         "args": "<emoji document_id=5974229895906069525>❓</emoji> <b>Args not specified</b>",
         "404": "<emoji document_id=5974229895906069525>❓</emoji> <b>Module not found</b>",
+        "no_class": "<emoji document_id=5974229895906069525>❓</emoji> <b>What class needs to be unloaded?</b>",
+        "unloaded": "<emoji document_id=5206607081334906820>✔️</emoji> <b>Module {} unloaded.</b>",
+        "not_unloaded": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Module not unloaded.</b>",
+        "cannot_unload_lib": "<emoji document_id=5454225457916420314>😖</emoji> <b>You can't unload library</b>",
     }
 
     strings_ru = {
-        "_cls_doc": "Менеджер модулей Хикки, оригинальный автор: @hikariatama",
+        "_cls_doc": "Менеджер модулей Хикки, оригинальный автор: @hikarimods",
         "args": "<emoji document_id=5974229895906069525>❓</emoji> <b>Нет аргументов</b>",
         "404": "<emoji document_id=5974229895906069525>❓</emoji> <b>Модуль не найден</b>",
+        "no_class": "<emoji document_id=5974229895906069525>❓</emoji> <b>А что выгружать то?</b>",
+        "unloaded": "<emoji document_id=5206607081334906820>✔️</emoji> <b>Модуль {} выгружен.</b>",
+        "not_unloaded": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Модуль не выгружен.</b>",
+        "cannot_unload_lib": "<emoji document_id=5454225457916420314>😖</emoji> <b>Ты не можешь выгрузить библиотеку</b>",
     }
 
-    @loader.command(ru_doc="<имя модуля> - Отправить ссылку на модуль")
+    async def unload_module(self, classname: str):
+        """Remove module and all stuff from it"""
+        with contextlib.suppress(AttributeError):
+            _hikka_client_id_logging_tag = copy.copy(self.client.tg_id)
+
+        worked = []
+
+        for module in self.allmodules.modules:
+            if classname.lower() in (
+                module.name.lower(),
+                module.__class__.__name__.lower(),
+            ):
+                worked += [module.__class__.__name__]
+
+                path1 = os.path.join(loader.LOADED_MODULES_DIR, f"{module.__class__.__name__}_{self.client.tg_id}.py")
+                path2 = os.path.join(CORE_MODULES_DIR, f"{module.__module__.replace('hikka.modules.', '')}.py")
+
+                if os.path.isfile(path1):
+                    os.remove(path1)
+
+                logger.info(f"{path1=}, {path2=}, {module.__module__=}, {CORE_MODULES_DIR=}")
+                logger.info(f"{(('https' not in module.__module__) and (os.path.isfile(path2)))=}")
+
+                if ("https" not in module.__module__) and (os.path.isfile(path2)):
+                    os.remove(path2)
+                    logger.info("yes")
+
+                self.allmodules.modules.remove(module)
+
+                await module.on_unload()
+
+                self.allmodules.unregister_raw_handlers(module, "unload")
+                self.allmodules.unregister_loops(module, "unload")
+                self.allmodules.unregister_commands(module, "unload")
+                self.allmodules.unregister_watchers(module, "unload")
+                self.allmodules.unregister_inline_stuff(module, "unload")
+
+        return worked
+
+    @loader.owner
+    @loader.command(ru_doc="<имя модуля> - Выгрузить любой модуль")
+    async def cunloadmod(self, message: Message):
+        """<module name> - Unload any module by class name"""
+        args = utils.get_args_raw(message)
+
+        if not args:
+            await utils.answer(message, self.strings("no_class"))
+            return
+
+        instance = self.lookup(args, include_dragon=True)
+
+        if issubclass(instance.__class__, loader.Library):
+            await utils.answer(message, self.strings("cannot_unload_lib"))
+            return
+
+        if isinstance(instance, DragonModule):
+            worked = [instance.name] if self.allmodules.unload_dragon(instance) else []
+        else:
+            worked = await self.unload_module(args)
+
+        if not self.allmodules.secure_boot:
+            self.set(
+                "loaded_modules",
+                {
+                    mod: link
+                    for mod, link in self.get("loaded_modules", {}).items()
+                    if mod not in worked
+                },
+            )
+
+        msg = (
+            self.strings("unloaded").format(
+                ", ".join(
+                    [(mod[:-3] if mod.endswith("Mod") else mod) for mod in worked]
+                ),
+            )
+            if worked else self.strings("not_unloaded")
+        )
+
+        await utils.answer(message, msg)
+
+    @loader.command(ru_doc="<имя модуля> - Отправить ссылку на любой модуль")
     async def cmlcmd(self, message: Message):
-        """<module name> - Send link to module"""
+        """<module name> - Send link to any module"""
         args = utils.get_args_raw(message)
         if not args:
             await utils.answer(message, self.strings("args"))
