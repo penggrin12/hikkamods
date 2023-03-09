@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class CryptoBalanceMod(loader.Module):
-    """Check your balance in many Crypto Wallet Bots"""
+    """Check your balance in many Crypto Wallet Bots. Idea & Most of the code by: @toxicuse"""
 
     strings = {
         'name': 'CryptoBalance',
