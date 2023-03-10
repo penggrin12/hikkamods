@@ -7,6 +7,7 @@
 from .. import loader, utils
 import logging
 
+__version__ = (1, 1, 0)
 logger = logging.getLogger(__name__)
 
 
@@ -20,7 +21,8 @@ class CryptoStealMod(loader.Module):
         "enabled": "✅ Enabled",
         "status_now": "👌 Crypto-Steal was <b>{}</b>!",
         "config_status": "Are we ready to steal?",
-        "config_allow_every_bot": "If disabled will only steal CryptoBot checks",
+        "config_allow_other_bots": "If disabled i will only steal checks by Trusted Bots",
+        "config_trusted_bots": "Trusted Bots to steal from even if allow_other_bots is False (lowercase username)",
     }
 
     strings_ru = {
@@ -28,7 +30,8 @@ class CryptoStealMod(loader.Module):
         "enabled": "✅ Включён",
         "status_now": "👌 Crypto-Steal теперь <b>{}</b>!",
         "config_status": "Готовы ли мы тырить?",
-        "config_allow_every_bot": "Если выключено то я буду тырить только CryptoBot чеки",
+        "config_allow_other_bots": "Если выключено то я буду тырить только чеки Доверенных Ботов",
+        "config_trusted_bots": "Доверенные Боты из которых я буду тырить даже если allow_other_bots на False (ник маленькими буквами)",
     }
 
     def __init__(self):
@@ -40,10 +43,21 @@ class CryptoStealMod(loader.Module):
                 validator=loader.validators.Boolean()
             ),
             loader.ConfigValue(
-                "allow_every_bot",
-                True,
-                lambda: self.strings("config_allow_every_bot"),
+                "allow_other_bots",
+                False,
+                lambda: self.strings("config_allow_other_bots"),
                 validator=loader.validators.Boolean()
+            ),
+            loader.ConfigValue(
+                "trusted_bots",
+                ["cryptobot", "tonrocketbot", "xjetswapbot"],
+                lambda: self.strings("trusted_bots"),
+                validator=loader.validators.Series(
+                    loader.validators.Union(
+                        loader.validators.String(),
+                        loader.validators.Integer()
+                    )
+                )
             ),
         )
 
@@ -57,12 +71,13 @@ class CryptoStealMod(loader.Module):
             return
 
         url = message.buttons[0][0].url.split("?start=")
+        user = await self.client.get_entity(url[0])
 
-        if (not ("CryptoBot" in url[0])) and (not self.config["allow_every_bot"]):
-            logger.debug("Ignoring not CryptoBot")
+        if (user.username.lower() not in self.config["trusted_bots"]) and (not self.config["allow_other_bots"]):
+            logger.debug(f"Ignoring not trusted bot (@{user.username})")
             return
 
-        await self.client.send_message(url[0], f"/start {url[1]}")
+        await self.client.send_message(user.id, f"/start {url[1]}")
         logger.debug("Sent check get request, hopefully we got it")
 
     async def cryptostealcmd(self, message):
