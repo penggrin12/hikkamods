@@ -7,13 +7,13 @@
 from .. import loader, utils
 import logging
 
-__version__ = (1, 1, 0)
+__version__ = (1, 2, 0)
 logger = logging.getLogger(__name__)
 
 
 @loader.tds
 class CryptoStealMod(loader.Module):
-    """Automatically claims cryptobot (and some other bots) checks"""
+    """Automatically claims cryptobot (and some other bots) checks, special thanks to @toxicuse"""
 
     strings = {
         "name": "CryptoSteal",
@@ -64,6 +64,7 @@ class CryptoStealMod(loader.Module):
     @loader.watcher(only_messages=True, only_inline=True)
     async def watcher(self, message):
         text = message.raw_text.lower()
+        already_claimed = self.get('already_claimed', [])
 
         if not self.config["status"]:
             return
@@ -71,6 +72,11 @@ class CryptoStealMod(loader.Module):
             return
 
         url = message.buttons[0][0].url.split("?start=")
+
+        if url[1] in already_claimed:
+            logging.debug('The check is already activated')
+            return
+
         user = await self.client.get_entity(url[0])
 
         if (user.username.lower() not in self.config["trusted_bots"]) and (not self.config["allow_other_bots"]):
@@ -79,6 +85,9 @@ class CryptoStealMod(loader.Module):
 
         await self.client.send_message(user.id, f"/start {url[1]}")
         logger.debug("Sent check get request, hopefully we got it")
+
+        already_claimed.append(url[1])
+        self.set('already_claimed', already_claimed)
 
     async def cryptostealcmd(self, message):
         """Toggle Crypto-Steal"""
