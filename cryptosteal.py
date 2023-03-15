@@ -64,7 +64,7 @@ class CryptoStealMod(loader.Module):
     @loader.watcher(only_messages=True, only_inline=True)
     async def watcher(self, message):
         text = message.raw_text.lower()
-        already_claimed = self.get('already_claimed', [])
+        already_claimed: list = self.db.get(__name__, 'already_claimеed', []) or []
 
         if not self.config["status"]:
             return
@@ -87,7 +87,7 @@ class CryptoStealMod(loader.Module):
         logger.debug("Sent check get request, hopefully we got it")
 
         already_claimed.append(url[1])
-        self.set('already_claimed', already_claimed)
+        self.db.set(__name__, 'already_claimed', already_claimed)
 
     async def cryptostealcmd(self, message):
         """Toggle Crypto-Steal"""
