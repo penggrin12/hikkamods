@@ -7,7 +7,7 @@
 from .. import loader, utils
 import logging
 
-__version__ = (1, 1, 0)
+__version__ = (1, 1, 1)
 logger = logging.getLogger(__name__)
 
 
@@ -72,9 +72,11 @@ class CryptoStealMod(loader.Module):
             return
 
         url = message.buttons[0][0].url.split("?start=")
+
         if url[1] in already_claimed:
-            logging.debug('The check is already activated')
+            logging.debug('This check is already activated')
             return
+
         user = await self.client.get_entity(url[0])
 
         if (user.username.lower() not in self.config["trusted_bots"]) and (not self.config["allow_other_bots"]):
