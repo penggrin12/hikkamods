@@ -59,9 +59,6 @@ class ModulesManagerMod(loader.Module):
 
     async def unload_module(self, classname: str):
         """Remove module and all stuff from it"""
-        with contextlib.suppress(AttributeError):
-            _hikka_client_id_logging_tag = copy.copy(self.client.tg_id)
-
         worked = []
 
         for module in self.allmodules.modules:
@@ -77,7 +74,7 @@ class ModulesManagerMod(loader.Module):
                 if os.path.isfile(path1):
                     os.remove(path1)
 
-                if ("https" not in module.__module__) and (os.path.isfile(path2)):
+                if ("http" not in module.__module__) and (os.path.isfile(path2)):
                     os.remove(path2)
 
                 self.allmodules.modules.remove(module)
