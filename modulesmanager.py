@@ -22,8 +22,6 @@ import inspect
 import io
 import logging
 import os
-import copy
-import contextlib
 
 from telethon.tl.types import Message
 from .. import loader, utils
